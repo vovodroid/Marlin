@@ -116,7 +116,8 @@ struct duration_t {
    * @details String will be formatted using a "full" representation of duration
    *
    * @param buffer The array pointed to must be able to accommodate 22 bytes
-   *               (21 for the string, 1 more for the terminating nul)
+   *               (21 for the string, 1 more for the terminating nul; 18 for the dense option)
+   * @param dense Whether to skip spaces in the resulting string
    *
    * Output examples:
    *  123456789012345678901 (strlen)
@@ -126,18 +127,26 @@ struct duration_t {
    *  59m 59s
    *  59s
    */
-  char* toString(char * const buffer) const {
+  char* toString(char * const buffer, bool dense=false) const {
     const uint16_t y = this->year(),
                    d = this->day() % 365,
                    h = this->hour() % 24,
                    m = this->minute() % 60,
                    s = this->second() % 60;
 
-         if (y) sprintf_P(buffer, PSTR("%iy %id %ih %im %is"), y, d, h, m, s);
-    else if (d) sprintf_P(buffer, PSTR("%id %ih %im %is"), d, h, m, s);
-    else if (h) sprintf_P(buffer, PSTR("%ih %im %is"), h, m, s);
-    else if (m) sprintf_P(buffer, PSTR("%im %is"), m, s);
-    else sprintf_P(buffer, PSTR("%is"), s);
+    if (dense) {
+           if (y) sprintf_P(buffer, PSTR("%iy%id%ih%im%is"), y, d, h, m, s);
+      else if (d) sprintf_P(buffer, PSTR("%id%ih%im%is"), d, h, m, s);
+      else if (h) sprintf_P(buffer, PSTR("%ih%im%is"), h, m, s);
+      else if (m) sprintf_P(buffer, PSTR("%im%is"), m, s);
+      else sprintf_P(buffer, PSTR("%is"), s);
+    } else {
+           if (y) sprintf_P(buffer, PSTR("%iy %id %ih %im %is"), y, d, h, m, s);
+      else if (d) sprintf_P(buffer, PSTR("%id %ih %im %is"), d, h, m, s);
+      else if (h) sprintf_P(buffer, PSTR("%ih %im %is"), h, m, s);
+      else if (m) sprintf_P(buffer, PSTR("%im %is"), m, s);
+      else sprintf_P(buffer, PSTR("%is"), s);
+    }
     return buffer;
   }
 
@@ -146,6 +155,7 @@ struct duration_t {
    * @details String will be formatted using a "digital" representation of duration
    *
    * @param buffer The array pointed to must be able to accommodate 10 bytes
+   * @return length of the formatted string (without terminating nul)
    *
    * Output examples:
    *  123456789 (strlen)
