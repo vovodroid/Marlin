@@ -352,6 +352,8 @@ public:
       static void rotate_progress() {}
     #endif
   #else
+    typedef uint8_t progress_t; // For compatibility
+    #define PROGRESS_SCALE 1U // For compatibility
     static constexpr uint8_t get_progress_percent() { return 0; }
   #endif
 
