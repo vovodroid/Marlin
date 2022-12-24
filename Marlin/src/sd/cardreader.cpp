@@ -561,6 +561,9 @@ void CardReader::manage_media() {
     TERN_(POWER_LOSS_RECOVERY, if (recovery.check()) do_auto = false);
   }
 
+  // Fix check for PLR file. Skip One-Click and auto#.g if found
+  //TERN_(POWER_LOSS_RECOVERY, if (recovery.check()) do_auto = false);
+
   // Find the newest file and prompt to print it.
   TERN_(ONE_CLICK_PRINT, if (do_auto && one_click_check()) do_auto = false);
 
