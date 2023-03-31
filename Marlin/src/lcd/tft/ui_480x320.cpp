@@ -322,8 +322,7 @@ void MarlinUI::draw_status_screen() {
   #if ENABLED(TOUCH_SCREEN)
     add_control(404, y + TERN(HAS_UI_480x272, 4, 8), menu_main, imgSettings);
     #if ENABLED(SDSUPPORT)
-      const bool cm = card.isMounted();
-      const bool pa = printingIsActive();
+      const bool cm = card.isMounted(), pa = printingIsActive();
       color = cm && pa ? COLOR_BUSY : COLOR_CONTROL_DISABLED;
       add_control(12, y + TERN(HAS_UI_480x272, 4, 8), menu_media, imgSD, cm && !pa, COLOR_CONTROL_ENABLED, color);
     #endif
@@ -667,11 +666,6 @@ struct MotionAxisState {
 };
 
 MotionAxisState motionAxisState;
-
-#define E_BTN_COLOR COLOR_YELLOW
-#define X_BTN_COLOR COLOR_CORAL_RED
-#define Y_BTN_COLOR COLOR_VIVID_GREEN
-#define Z_BTN_COLOR COLOR_LIGHT_BLUE
 
 #define BTN_WIDTH 64
 #define BTN_HEIGHT 52
