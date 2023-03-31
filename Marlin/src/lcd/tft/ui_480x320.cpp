@@ -387,7 +387,7 @@ void MarlinUI::draw_status_screen() {
     // Print duration so far (time elapsed) - aligned under feed rate
     char elapsed_str[18];
     duration_t elapsed = print_job_timer.duration();
-    elapsed.toString(elapsed_str, true);
+    elapsed.toCompactString(elapsed_str);
 
     tft.canvas(96, y, 144, 32);
     tft.set_background(COLOR_BACKGROUND);
@@ -415,7 +415,7 @@ void MarlinUI::draw_status_screen() {
     }
     else {
       duration_t estimation = estimate_remaining;
-      estimation.toString(estimate_str, true);
+      estimation.toCompactString(estimate_str);
       tft_string.set(estimate_str);
     }
 
@@ -441,7 +441,7 @@ void MarlinUI::draw_status_screen() {
   y += 12;
   // status message
   // canvas height should be 40px on 480x320 and 28 on 480x272
-  constexpr uint16_t status_height = TFT_HEIGHT - y;
+  const uint16_t status_height = TFT_HEIGHT - y;
   tft.canvas(0, y, TFT_WIDTH, status_height);
   tft.set_background(COLOR_BACKGROUND);
   tft_string.set(status_message);
@@ -720,9 +720,7 @@ static void drawMessage(PGM_P const msg) {
   tft.add_text(0, 0, COLOR_YELLOW, msg);
 }
 
-static void drawMessage(FSTR_P const fmsg) {
-  drawMessage(FTOP(fmsg));
-}
+static void drawMessage(FSTR_P const fmsg) { drawMessage(FTOP(fmsg)); }
 
 static void drawAxisValue(const AxisEnum axis) {
   const float value = (
@@ -760,9 +758,9 @@ static void moveAxis(const AxisEnum axis, const int8_t direction) {
       const bool do_probe = DISABLED(BABYSTEP_HOTEND_Z_OFFSET) || active_extruder == 0;
       const float bsDiff = planner.mm_per_step[Z_AXIS] * babystep_increment,
                   new_probe_offset = probe.offset.z + bsDiff,
-                  new_offs = TERN(BABYSTEP_HOTEND_Z_OFFSET,
-                    do_probe ? new_probe_offset : hotend_offset[active_extruder].z - bsDiff,
-                    new_probe_offset
+                  new_offs = TERN(BABYSTEP_HOTEND_Z_OFFSET
+                    , do_probe ? new_probe_offset : hotend_offset[active_extruder].z - bsDiff
+                    , new_probe_offset
                   );
       if (WITHIN(new_offs, Z_PROBE_OFFSET_RANGE_MIN, Z_PROBE_OFFSET_RANGE_MAX)) {
         babystep.add_steps(Z_AXIS, babystep_increment);

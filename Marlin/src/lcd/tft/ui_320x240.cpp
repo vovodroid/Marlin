@@ -273,8 +273,8 @@ void MarlinUI::draw_status_screen() {
     tft.add_text(TERN(TFT_COLOR_UI_PORTRAIT, 32, 10), tft_string.vcenter(FONT_LINE_HEIGHT), COLOR_AXIS_HOMED, "X");
     const bool nhx = axis_should_home(X_AXIS);
     tft_string.set(blink && nhx ? "?" : ftostr4sign(LOGICAL_X_POSITION(current_position.x)));
-    uint16_t pos_x = TERN(TFT_COLOR_UI_PORTRAIT, 32 - tft_string.width() / 2, 68 - tft_string.width());
-    uint16_t pos_y = tft_string.vcenter(FONT_LINE_HEIGHT) + TERN(TFT_COLOR_UI_PORTRAIT, FONT_LINE_HEIGHT, 0);
+    uint16_t pos_x = TERN(TFT_COLOR_UI_PORTRAIT, 32 - tft_string.width() / 2, 68 - tft_string.width()),
+             pos_y = SUM_TERN(TFT_COLOR_UI_PORTRAIT, tft_string.vcenter(FONT_LINE_HEIGHT), FONT_LINE_HEIGHT);
     tft.add_text(pos_x, pos_y,nhx ? COLOR_AXIS_NOT_HOMED : COLOR_AXIS_HOMED, tft_string);
 
     tft.add_text(TERN(TFT_COLOR_UI_PORTRAIT, 110, 127), tft_string.vcenter(FONT_LINE_HEIGHT), COLOR_AXIS_HOMED, "Y");
@@ -305,8 +305,9 @@ void MarlinUI::draw_status_screen() {
     tft_string.set(ftostr52sp(z));
     offset -= tft_string.width();
   }
-  uint16_t pos_x = TERN(TFT_COLOR_UI_PORTRAIT, 192 - tft_string.width() / 2, 301 - tft_string.width() - offset);
-  uint16_t pos_y = tft_string.vcenter(FONT_LINE_HEIGHT) + TERN(TFT_COLOR_UI_PORTRAIT, FONT_LINE_HEIGHT, 0);
+
+  uint16_t pos_x = TERN(TFT_COLOR_UI_PORTRAIT, 192 - tft_string.width() / 2, 301 - tft_string.width() - offset),
+           pos_y = SUM_TERN(TFT_COLOR_UI_PORTRAIT, tft_string.vcenter(FONT_LINE_HEIGHT), FONT_LINE_HEIGHT);
   tft.add_text(pos_x, pos_y, nhz ? COLOR_AXIS_NOT_HOMED : COLOR_AXIS_HOMED, tft_string);
   width = TERN(TFT_COLOR_UI_PORTRAIT, 232, 312);
   height = TERN(TFT_COLOR_UI_PORTRAIT, FONT_LINE_HEIGHT * 2, FONT_LINE_HEIGHT);
@@ -323,11 +324,11 @@ void MarlinUI::draw_status_screen() {
   // feed rate
   tft.canvas(
     #if ENABLED(TFT_COLOR_UI_PORTRAIT)
-      30, 172, 80,
+      30, 172, 80
     #else
-      70, 132, 88,
+      70, 132, 88
     #endif
-    MENU_ITEM_HEIGHT
+    , MENU_ITEM_HEIGHT
   );
   tft.set_background(COLOR_BACKGROUND);
   uint16_t color = feedrate_percentage == 100 ? COLOR_RATE_100 : COLOR_RATE_ALTERED;
@@ -337,21 +338,21 @@ void MarlinUI::draw_status_screen() {
   tft.add_text(32, tft_string.vcenter(30), color, tft_string);
   TERN_(TOUCH_SCREEN, touch.add_control(FEEDRATE,
     #if ENABLED(TFT_COLOR_UI_PORTRAIT)
-      30, 172,
+      30, 172
     #else
-      70, 132,
+      70, 132
     #endif
-    80, MENU_ITEM_HEIGHT
+    , 80, MENU_ITEM_HEIGHT
   ));
 
   // flow rate
   tft.canvas(
     #if ENABLED(TFT_COLOR_UI_PORTRAIT)
-      140, 172, 80,
+      140, 172, 80
     #else
-      162, 132, 88,
+      162, 132, 88
     #endif
-    MENU_ITEM_HEIGHT
+    , MENU_ITEM_HEIGHT
   );
   tft.set_background(COLOR_BACKGROUND);
   color = planner.flow_percentage[0] == 100 ? COLOR_RATE_100 : COLOR_RATE_ALTERED;
@@ -361,11 +362,11 @@ void MarlinUI::draw_status_screen() {
   tft.add_text(32, tft_string.vcenter(30), color, tft_string);
   TERN_(TOUCH_SCREEN, touch.add_control(FLOWRATE,
     #if ENABLED(TFT_COLOR_UI_PORTRAIT)
-      140, 172,
+      140, 172
     #else
-      170, 132,
+      170, 132
     #endif
-    80, MENU_ITEM_HEIGHT, active_extruder
+    , 80, MENU_ITEM_HEIGHT, active_extruder
   ));
 
   // 3rd group, subgroup C - times (center, bottom half)
@@ -378,7 +379,7 @@ void MarlinUI::draw_status_screen() {
     // Print duration so far (time elapsed) - centered
     char elapsed_str[18];
     duration_t elapsed = print_job_timer.duration();
-    elapsed.toString(elapsed_str, true);
+    elapsed.toCompactString(elapsed_str);
 
     tft.canvas(pos_x, pos_y, time_str_width, MENU_ITEM_HEIGHT);
     tft.set_background(COLOR_BACKGROUND);
@@ -409,7 +410,7 @@ void MarlinUI::draw_status_screen() {
     }
     else {
       duration_t estimation = estimate_remaining;
-      estimation.toString(estimate_str, true);
+      estimation.toCompactString(estimate_str);
       tft_string.set(estimate_str);
     }
 
@@ -424,7 +425,7 @@ void MarlinUI::draw_status_screen() {
     // Print duration so far (time elapsed) - aligned under feed rate
     char elapsed_str[18];
     duration_t elapsed = print_job_timer.duration();
-    elapsed.toString(elapsed_str, true);
+    elapsed.toCompactString(elapsed_str);
 
     tft.canvas(pos_x, pos_y, time_str_width / 2 - 2, MENU_ITEM_HEIGHT);
     tft.set_background(COLOR_BACKGROUND);
@@ -452,7 +453,7 @@ void MarlinUI::draw_status_screen() {
     }
     else {
       duration_t estimation = estimate_remaining;
-      estimation.toString(estimate_str, true);
+      estimation.toCompactString(estimate_str);
       tft_string.set(estimate_str);
     }
 
@@ -821,9 +822,9 @@ static void moveAxis(const AxisEnum axis, const int8_t direction) {
       const bool do_probe = DISABLED(BABYSTEP_HOTEND_Z_OFFSET) || active_extruder == 0;
       const float bsDiff = planner.mm_per_step[Z_AXIS] * babystep_increment,
                   new_probe_offset = probe.offset.z + bsDiff,
-                  new_offs = TERN(BABYSTEP_HOTEND_Z_OFFSET,
-                    do_probe ? new_probe_offset : hotend_offset[active_extruder].z - bsDiff,
-                    new_probe_offset
+                  new_offs = TERN(BABYSTEP_HOTEND_Z_OFFSET
+                    , do_probe ? new_probe_offset : hotend_offset[active_extruder].z - bsDiff
+                    , new_probe_offset
                   );
       if (WITHIN(new_offs, Z_PROBE_OFFSET_RANGE_MIN, Z_PROBE_OFFSET_RANGE_MAX)) {
         babystep.add_steps(Z_AXIS, babystep_increment);
