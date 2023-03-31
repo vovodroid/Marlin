@@ -339,8 +339,7 @@ void MarlinUI::draw_status_screen() {
     elapsed.toString(elapsed_str);
 
     // Same width constraints as feedrate/flowrate controls
-    const uint16_t time_str_width = 288;
-    const uint16_t image_width = 36;
+    constexpr uint16_t time_str_width = 288, image_width = 36;
 
     tft.canvas((TFT_WIDTH - time_str_width) / 2, y, time_str_width, 32);
     tft.set_background(COLOR_BACKGROUND);
@@ -376,8 +375,7 @@ void MarlinUI::draw_status_screen() {
     }
 
     // Same width constraints as feedrate/flowrate controls
-    const uint16_t time_str_width = 288;
-    const uint16_t image_width = 36;
+    constexpr uint16_t time_str_width = 288, image_width = 36;
 
     tft.canvas((TFT_WIDTH - time_str_width) / 2, y, time_str_width, 32);
     tft.set_background(COLOR_BACKGROUND);
@@ -444,7 +442,7 @@ void MarlinUI::draw_status_screen() {
   y += 12;
   // status message
   // canvas height should be 40px on 480x320 and 28 on 480x272
-  const uint16_t status_height = TFT_HEIGHT - y;
+  constexpr uint16_t status_height = TFT_HEIGHT - y;
   tft.canvas(0, y, TFT_WIDTH, status_height);
   tft.set_background(COLOR_BACKGROUND);
   tft_string.set(status_message);

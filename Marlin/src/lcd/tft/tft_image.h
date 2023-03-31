@@ -183,4 +183,3 @@ extern const tImage Time_Remaining_32x32x4;
 extern const tImage Slider8x16x4;
 
 extern const tImage Images[imgCount];
-
