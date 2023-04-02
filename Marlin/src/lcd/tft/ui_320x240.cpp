@@ -395,7 +395,7 @@ void MarlinUI::draw_status_screen() {
 
     // Get the estimate, first from M73
     uint32_t estimate_remaining = (0
-      #if BOTH(LCD_SET_PROGRESS_MANUALLY, USE_M73_REMAINING_TIME)
+      #if BOTH(LCD_SET_PROGRESS_MANUALLY, SET_REMAINING_TIME)
         + get_remaining_time()
       #endif
     );
@@ -438,7 +438,7 @@ void MarlinUI::draw_status_screen() {
 
     // Get the estimate, first from M73
     uint32_t estimate_remaining = (0
-      #if BOTH(LCD_SET_PROGRESS_MANUALLY, USE_M73_REMAINING_TIME)
+      #if BOTH(LCD_SET_PROGRESS_MANUALLY, SET_REMAINING_TIME)
         + get_remaining_time()
       #endif
     );
