@@ -430,7 +430,7 @@ void menu_move() {
         MENU_ITEM_ADDON_START_RJ(5); lcd_put_u8str(shaper_name[X_AXIS]); MENU_ITEM_ADDON_END();
 
         if (AXIS_HAS_SHAPER(X)) {
-          EDIT_ITEM_FAST_N(float42_52, X_AXIS, MSG_FTM_BASE_FREQ_N, &c.baseFreq.x, FTM_MIN_SHAPE_FREQ, (FTM_FS) / 2, ftMotion.update_shaping_params);
+          EDIT_ITEM_FAST_N(float31, X_AXIS, MSG_FTM_BASE_FREQ_N, &c.baseFreq.x, FTM_MIN_SHAPE_FREQ, 100, ftMotion.update_shaping_params);
           EDIT_ITEM_FAST_N(float42_52, X_AXIS, MSG_FTM_ZETA_N, &c.zeta.x, 0.0f, 1.0f, ftMotion.update_shaping_params);
           if (AXIS_HAS_EISHAPER(X))
             EDIT_ITEM_FAST_N(float42_52, X_AXIS, MSG_FTM_VTOL_N, &c.vtol.x, 0.0f, 1.0f, ftMotion.update_shaping_params);
@@ -441,7 +441,7 @@ void menu_move() {
         MENU_ITEM_ADDON_START_RJ(5); lcd_put_u8str(shaper_name[Y_AXIS]); MENU_ITEM_ADDON_END();
 
         if (AXIS_HAS_SHAPER(Y)) {
-          EDIT_ITEM_FAST_N(float42_52, Y_AXIS, MSG_FTM_BASE_FREQ_N, &c.baseFreq.y, FTM_MIN_SHAPE_FREQ, (FTM_FS) / 2, ftMotion.update_shaping_params);
+          EDIT_ITEM_FAST_N(float31, Y_AXIS, MSG_FTM_BASE_FREQ_N, &c.baseFreq.y, FTM_MIN_SHAPE_FREQ, 100, ftMotion.update_shaping_params);
           EDIT_ITEM_FAST_N(float42_52, Y_AXIS, MSG_FTM_ZETA_N, &c.zeta.y, 0.0f, 1.0f, ftMotion.update_shaping_params);
           if (AXIS_HAS_EISHAPER(Y))
             EDIT_ITEM_FAST_N(float42_52, Y_AXIS, MSG_FTM_VTOL_N, &c.vtol.y, 0.0f, 1.0f, ftMotion.update_shaping_params);
