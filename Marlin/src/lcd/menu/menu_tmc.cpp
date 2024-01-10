@@ -32,7 +32,7 @@
 #include "../../module/stepper/indirection.h"
 #include "../../feature/tmc_util.h"
 
-#define TMC_EDIT_STORED_I_RMS(ST,STR) EDIT_ITEM_F(uint16_4, F(STR), &stepper##ST.val_mA, 100, 3000, []{ stepper##ST.refresh_stepper_current(); })
+#define TMC_EDIT_STORED_I_RMS(ST,STR) EDIT_ITEM_F(uint16_4, F(STR), &stepper##ST.val_mA, 1, 1000, []{ stepper##ST.refresh_stepper_current(); })
 
 void menu_tmc_current() {
   START_MENU();
