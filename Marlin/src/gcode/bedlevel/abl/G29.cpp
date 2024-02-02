@@ -110,7 +110,7 @@ public:
   #elif ENABLED(AUTO_BED_LEVELING_3POINT)
     static constexpr grid_count_t abl_points = 3;
   #elif ABL_USES_GRID
-    static constexpr grid_count_t abl_points = GRID_MAX_POINTS;
+    static grid_count_t abl_points;
   #endif
 
   #if ABL_USES_GRID
@@ -126,7 +126,7 @@ public:
       bool                topography_map;
       xy_uint8_t          grid_points;
     #else // Bilinear
-      static constexpr xy_uint8_t grid_points = { GRID_MAX_POINTS_X, GRID_MAX_POINTS_Y };
+      static xy_uint8_t grid_points;
     #endif
 
     #if ENABLED(AUTO_BED_LEVELING_BILINEAR)
@@ -144,8 +144,12 @@ public:
 };
 
 #if ABL_USES_GRID && ANY(AUTO_BED_LEVELING_3POINT, AUTO_BED_LEVELING_BILINEAR)
-  constexpr xy_uint8_t G29_State::grid_points;
-  constexpr grid_count_t G29_State::abl_points;
+  #if ENABLED(AUTO_BED_LEVELING_BILINEAR)
+    uint8_t grid_points_x = GRID_MAX_POINTS_X;
+    uint8_t grid_points_y = GRID_MAX_POINTS_Y;
+  #endif  
+  xy_uint8_t G29_State::grid_points  = { GRID_POINTS_X, GRID_POINTS_Y };
+  grid_count_t G29_State::abl_points = GRID_POINTS;
 #endif
 
 /**
@@ -290,7 +294,39 @@ G29_TYPE GcodeSuite::G29() {
 
     abl.reenable = planner.leveling_active;
 
+    #if ABL_USES_GRID
+
+      xy_probe_feedrate_mm_s = MMM_TO_MMS(parser.linearval('S', XY_PROBE_FEEDRATE));
+
+      const float x_min = probe.min_x(), x_max = probe.max_x(),
+                  y_min = probe.min_y(), y_max = probe.max_y();
+
+      if (parser.seen('H')) {
+        const int16_t size = (int16_t)parser.value_linear_units();
+        abl.probe_position_lf.set(_MAX((X_CENTER) - size / 2, x_min), _MAX((Y_CENTER) - size / 2, y_min));
+        abl.probe_position_rb.set(_MIN(abl.probe_position_lf.x + size, x_max), _MIN(abl.probe_position_lf.y + size, y_max));
+      }
+      else {
+        abl.probe_position_lf.set(parser.linearval('L', x_min), parser.linearval('F', y_min));
+        abl.probe_position_rb.set(parser.linearval('R', x_max), parser.linearval('B', y_max));
+      }
+
+      if (!probe.good_bounds(abl.probe_position_lf, abl.probe_position_rb)) {
+        if (DEBUGGING(LEVELING)) {
+          DEBUG_ECHOLNPGM("G29 L", abl.probe_position_lf.x, " R", abl.probe_position_rb.x,
+                             " F", abl.probe_position_lf.y, " B", abl.probe_position_rb.y);
+        }
+        SERIAL_ECHOLNPGM(GCODE_ERR_MSG(" (L,R,F,B) out of bounds."));
+        G29_RETURN(false, false);
+      }
+
+    #endif // ABL_USES_GRID
+
     #if ENABLED(AUTO_BED_LEVELING_BILINEAR)
+
+      grid_points_x = abl.grid_points.x = max(2, (int)round((abl.probe_position_rb.x - abl.probe_position_lf.x) / GRID_SPACING) + 1);
+      grid_points_y = abl.grid_points.y = max(2, (int)round((abl.probe_position_rb.y - abl.probe_position_lf.y) / GRID_SPACING) + 1);
+      G29_State::abl_points = GRID_POINTS;
 
       const bool seen_w = parser.seen_test('W');
       if (seen_w) {
@@ -316,13 +352,13 @@ G29_TYPE GcodeSuite::G29() {
           // Get nearest i / j from rx / ry
           i = (rx - bedlevel.grid_start.x) / bedlevel.grid_spacing.x + 0.5f;
           j = (ry - bedlevel.grid_start.y) / bedlevel.grid_spacing.y + 0.5f;
-          LIMIT(i, 0, (GRID_MAX_POINTS_X) - 1);
-          LIMIT(j, 0, (GRID_MAX_POINTS_Y) - 1);
+          LIMIT(i, 0, (GRID_POINTS_X) - 1);
+          LIMIT(j, 0, (GRID_POINTS_Y) - 1);
         }
 
         #pragma GCC diagnostic pop
 
-        if (WITHIN(i, 0, (GRID_MAX_POINTS_X) - 1) && WITHIN(j, 0, (GRID_MAX_POINTS_Y) - 1)) {
+        if (WITHIN(i, 0, (GRID_POINTS_X) - 1) && WITHIN(j, 0, (GRID_POINTS_Y) - 1)) {
           set_bed_leveling_enabled(false);
           bedlevel.z_values[i][j] = rz;
           bedlevel.refresh_bed_level();
@@ -388,30 +424,6 @@ G29_TYPE GcodeSuite::G29() {
     #endif
 
     #if ABL_USES_GRID
-
-      xy_probe_feedrate_mm_s = MMM_TO_MMS(parser.linearval('S', XY_PROBE_FEEDRATE));
-
-      const float x_min = probe.min_x(), x_max = probe.max_x(),
-                  y_min = probe.min_y(), y_max = probe.max_y();
-
-      if (parser.seen('H')) {
-        const int16_t size = (int16_t)parser.value_linear_units();
-        abl.probe_position_lf.set(_MAX((X_CENTER) - size / 2, x_min), _MAX((Y_CENTER) - size / 2, y_min));
-        abl.probe_position_rb.set(_MIN(abl.probe_position_lf.x + size, x_max), _MIN(abl.probe_position_lf.y + size, y_max));
-      }
-      else {
-        abl.probe_position_lf.set(parser.linearval('L', x_min), parser.linearval('F', y_min));
-        abl.probe_position_rb.set(parser.linearval('R', x_max), parser.linearval('B', y_max));
-      }
-
-      if (!probe.good_bounds(abl.probe_position_lf, abl.probe_position_rb)) {
-        if (DEBUGGING(LEVELING)) {
-          DEBUG_ECHOLNPGM("G29 L", abl.probe_position_lf.x, " R", abl.probe_position_rb.x,
-                             " F", abl.probe_position_lf.y, " B", abl.probe_position_rb.y);
-        }
-        SERIAL_ECHOLNPGM(GCODE_ERR_MSG(" (L,R,F,B) out of bounds."));
-        G29_RETURN(false, false);
-      }
 
       // Probe at the points of a lattice grid
       abl.gridSpacing.set((abl.probe_position_rb.x - abl.probe_position_lf.x) / (abl.grid_points.x - 1),

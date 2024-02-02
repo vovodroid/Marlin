@@ -2148,6 +2148,8 @@
 
   #if ENABLED(AUTO_BED_LEVELING_BILINEAR)
 
+    #define GRID_SPACING 50
+
     // Beyond the probed grid, continue the implied tilt?
     // Default is to maintain the height of the nearest edge.
     //#define EXTRAPOLATE_BEYOND_GRID
