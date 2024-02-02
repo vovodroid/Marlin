@@ -2289,6 +2289,8 @@
 
   #if ENABLED(AUTO_BED_LEVELING_BILINEAR)
 
+    #define GRID_SPACING 50
+
     #if DISABLED(USE_PROBE_FOR_Z_HOMING) && ALL(FIX_MOUNTED_PROBE, Z_SAFE_HOMING)
       // If your Z Home (M206) is well-calibrated enable this to establish Probe Z0 before every G29
       //#define PROBE_Z0_BEFORE_G29
