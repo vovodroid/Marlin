@@ -274,6 +274,8 @@ void PrintJobRecovery::save(const bool force/*=false*/, const float zraise/*=POW
     info.flag.allow_cold_extrusion = TERN0(PREVENT_COLD_EXTRUSION, thermalManager.allow_cold_extrude);
 
     write();
+
+    ui.export_settings("PLR503.GC");
   }
 }
 
@@ -389,6 +391,20 @@ void PrintJobRecovery::set_bed_temp(bool turn_on) {
  * Resume the saved print job
  */
 void PrintJobRecovery::resume() {
+  MediaFile root = card.getroot();
+  MediaFile f503;
+  f503.open(&root, "PLR503.GC", O_READ);
+
+  if (f503.isOpen()){
+    char m503[4096];
+    int b = f503.read(m503, 4096);
+    if (b > 0 && b < 4096) {
+      m503[b] = 0;
+      gcode.process_subcommands_now(m503);
+    }
+    f503.close();
+  }
+
   // Get these fields before any moves because stepper.cpp overwrites them
   const xyze_pos_t resume_pos = info.current_position;
   const uint32_t resume_sdpos = info.sdpos;
