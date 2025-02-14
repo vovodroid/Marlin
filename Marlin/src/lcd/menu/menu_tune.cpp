@@ -121,6 +121,10 @@ void menu_tune() {
     #endif
   #endif
 
+  #if ENABLED(FEEDRATE_PRINTING_LIMIT)
+    EDIT_ITEM_FAST(float5, MSG_MAX_PRINTING_SPEED, &planner.max_printing_feedrate_mm_s, 0, std::max(planner.settings.max_feedrate_mm_s[0]*1.414, planner.settings.max_feedrate_mm_s[1]*1.414));
+  #endif
+
   //
   // Manual bed leveling, Bed Z:
   //

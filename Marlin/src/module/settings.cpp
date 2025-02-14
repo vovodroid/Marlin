@@ -492,6 +492,10 @@ typedef struct SettingsDataStruct {
   float planner_filament_size[EXTRUDERS];               // M200 T D  planner.filament_size[]
   float planner_volumetric_extruder_limit[EXTRUDERS];   // M200 T L  planner.volumetric_extruder_limit[]
 
+  #if ENABLED(FEEDRATE_PRINTING_LIMIT)
+    feedRate_t max_printing_feedrate_mm_s;
+  #endif
+
   //
   // HAS_TRINAMIC_CONFIG
   //
@@ -1443,6 +1447,10 @@ void MarlinSettings::postprocess() {
 
       #endif
     }
+
+    #if ENABLED(FEEDRATE_PRINTING_LIMIT)
+      EEPROM_WRITE(planner.max_printing_feedrate_mm_s);
+    #endif
 
     //
     // TMC Configuration
@@ -2544,6 +2552,12 @@ void MarlinSettings::postprocess() {
           }
         #endif
       }
+
+      #if ENABLED(FEEDRATE_PRINTING_LIMIT)
+        feedRate_t max_printing_feedrate_mm_s;
+        EEPROM_READ(max_printing_feedrate_mm_s);
+        if (!validating) planner.max_printing_feedrate_mm_s = max_printing_feedrate_mm_s;
+      #endif
 
       //
       // TMC Stepper Settings
@@ -3668,6 +3682,10 @@ void MarlinSettings::reset() {
       for (uint8_t q = 0; q < COUNT(planner.volumetric_extruder_limit); ++q)
         planner.volumetric_extruder_limit[q] = DEFAULT_VOLUMETRIC_EXTRUDER_LIMIT;
     #endif
+  #endif
+
+  #if ENABLED(FEEDRATE_PRINTING_LIMIT)
+    planner.max_printing_feedrate_mm_s = DEFAULT_FEEDRATE_PRINTING_LIMIT;
   #endif
 
   endstops.enable_globally(ENABLED(ENDSTOPS_ALWAYS_ON_DEFAULT));
