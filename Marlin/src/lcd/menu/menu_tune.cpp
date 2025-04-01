@@ -209,6 +209,7 @@ void menu_tune() {
     #endif
     */
 
+    EDIT_ITEM_FAST(percent, MSG_MAX_FAN_SPEED, &Temperature::max_fan_speed, 0, 255);
   #endif // HAS_FAN
 
   //
