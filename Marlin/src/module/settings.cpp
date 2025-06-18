@@ -3004,6 +3004,9 @@ void MarlinSettings::postprocess() {
       //
       #if ENABLED(NONLINEAR_EXTRUSION)
         EEPROM_READ(stepper.nle.settings);
+        stepper.nle.settings.coeff.A = 0;
+        stepper.nle.settings.coeff.B = 0;
+        stepper.nle.settings.coeff.C = 1;
       #endif
 
       //
