@@ -1695,7 +1695,6 @@ void CardReader::fileHasFinished() {
     if (jobRecoverFileExists()) {
       recovery.init();
       removeFile(recovery.filename);
-      removeFile("PLR503.GC");
       TERN_(SOVOL_SV06_RTS, poweroff_continue = false);
       #if ENABLED(DEBUG_POWER_LOSS_RECOVERY)
         SERIAL_ECHOLN(F("Power-loss file delete"), jobRecoverFileExists() ? F(" failed.") : F("d."));
