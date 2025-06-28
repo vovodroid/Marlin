@@ -301,6 +301,17 @@ void PrintJobRecovery::save(const bool force/*=false*/, const float zraise/*=POW
     info.flag.allow_cold_extrusion = TERN0(PREVENT_COLD_EXTRUSION, thermalManager.allow_cold_extrude);
 
     TERN_(CREALITY_RTS, recovery_flag = PoweroffContinue);
+
+    #if ENABLED(AUTO_BED_LEVELING_BILINEAR)
+      info.grid_x = GRID_POINTS_X;
+      info.grid_y = GRID_POINTS_Y;
+
+      info.grid_spacing = bedlevel.grid_spacing;
+      info.grid_start   = bedlevel.grid_start;
+
+      memcpy(info.z_values, bedlevel.z_values, sizeof(bed_mesh_t));
+    #endif
+
     write();
 
     DEBUG_ECHO_MSG("motion.position.z:", motion.position.z);
@@ -531,6 +542,16 @@ void PrintJobRecovery::resume() {
   DEBUG_ECHO_MSG(">>> homed motion.position.z:", motion.position.z);
 
   #if HAS_LEVELING
+    #if ENABLED(AUTO_BED_LEVELING_BILINEAR)
+      GRID_POINTS_X = info.grid_x;
+      GRID_POINTS_Y = info.grid_y;
+
+      bedlevel.set_grid(info.grid_spacing, info.grid_start);
+      memcpy(bedlevel.z_values, info.z_values,  sizeof(bed_mesh_t));
+
+      TERN_(EXTENSIBLE_UI, GRID_LOOP(x, y) ExtUI::onMeshUpdate(x, y, bedlevel.z_values[x][y]));
+    #endif
+
     // Restore Z fade and possibly re-enable bed leveling compensation.
     // Leveling may already be enabled due to the ENABLE_LEVELING_AFTER_G28 option.
     // TODO: Add a G28 parameter to leave leveling disabled.
