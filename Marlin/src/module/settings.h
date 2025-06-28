@@ -44,7 +44,7 @@ class MarlinSettings {
     static uint16_t datasize();
 
     static void reset();
-    static bool save();    // Return 'true' if data was saved
+    static bool save(bool mesh = false);    // Return 'true' if data was saved
 
     // Save settings EEPROM_AUTOSAVE_AFTER ms after the last request, once not printing
     #if EEPROM_AUTOSAVE_AFTER > 0
