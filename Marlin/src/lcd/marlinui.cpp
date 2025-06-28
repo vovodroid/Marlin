@@ -2080,8 +2080,8 @@ uint8_t expand_u8str_P(char * const outstr, PGM_P const ptpl, const int8_t ind, 
       const bool good = settings.load();
       completion_feedback(good);
     }
-    void MarlinUI::store_settings() {
-      const bool good = settings.save();
+    void MarlinUI::store_settings(bool mesh) {
+      const bool good = settings.save(mesh);
       completion_feedback(good);
     }
   #endif

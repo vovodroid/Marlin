@@ -44,7 +44,7 @@ class MarlinSettings {
     static uint16_t datasize();
 
     static void reset();
-    static bool save();    // Return 'true' if data was saved
+    static bool save(bool mesh = false);    // Return 'true' if data was saved
 
     FORCE_INLINE static bool init_eeprom() {
       reset();

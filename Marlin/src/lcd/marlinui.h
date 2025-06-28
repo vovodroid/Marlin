@@ -793,7 +793,7 @@ public:
     #if HAS_MARLINUI_MENU
       static void init_eeprom();
       static void load_settings();
-      static void store_settings();
+      static void store_settings(bool mesh = false);
     #endif
     static void eeprom_alert(const EEPROM_Error) TERN_(EEPROM_AUTO_INIT, {});
   #endif

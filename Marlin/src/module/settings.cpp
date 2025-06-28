@@ -738,6 +738,10 @@ uint16_t MarlinSettings::datasize() { return sizeof(SettingsData); }
   float new_z_fade_height;
 #endif
 
+  xy_pos_t spacing;
+  xy_pos_t start;
+  bed_mesh_t z_values;
+
 void MarlinSettings::postprocess() {
   xyze_pos_t oldpos = motion.position;
 
@@ -896,7 +900,7 @@ void MarlinSettings::postprocess() {
   /**
    * M500 - Store Configuration
    */
-  bool MarlinSettings::save() {
+  bool MarlinSettings::save(bool mesh) {
     float dummyf = 0;
 
     if (!EEPROM_START(EEPROM_OFFSET)) return false;
@@ -1110,8 +1114,13 @@ void MarlinSettings::postprocess() {
       EEPROM_WRITE(grid_check);
 
       #if ENABLED(AUTO_BED_LEVELING_BILINEAR)
-        EEPROM_WRITE(bedlevel.grid_spacing);
-        EEPROM_WRITE(bedlevel.grid_start);
+        if (mesh) {
+          EEPROM_WRITE(bedlevel.grid_spacing);
+          EEPROM_WRITE(bedlevel.grid_start);
+        } else {
+          EEPROM_WRITE(spacing);
+          EEPROM_WRITE(start);
+        }
       #else
         const xy_pos_t bilinear_grid_spacing{0}, bilinear_start{0};
         EEPROM_WRITE(bilinear_grid_spacing);
@@ -1119,7 +1128,10 @@ void MarlinSettings::postprocess() {
       #endif
 
       #if ENABLED(AUTO_BED_LEVELING_BILINEAR)
-        EEPROM_WRITE(bedlevel.z_values);              // 9-256 floats
+        if (mesh)
+          EEPROM_WRITE(bedlevel.z_values);              // 9-256 floats
+        else
+          EEPROM_WRITE(z_values);
       #else
         dummyf = 0;
         for (uint16_t q = grid_max_x * grid_max_y; q--;) EEPROM_WRITE(dummyf);
@@ -2189,7 +2201,6 @@ void MarlinSettings::postprocess() {
           break;
         }
 
-        xy_pos_t spacing, start;
         EEPROM_READ(spacing);                          // 2 ints
         EEPROM_READ(start);                            // 2 ints
         #if ENABLED(AUTO_BED_LEVELING_BILINEAR)
@@ -2197,6 +2208,7 @@ void MarlinSettings::postprocess() {
             if (!validating) set_bed_leveling_enabled(false);
             bedlevel.set_grid(spacing, start);
             EEPROM_READ(bedlevel.z_values);            // 9 to 256 floats
+            memcpy(z_values, bedlevel.z_values, sizeof(bed_mesh_t));
           }
           else if (grid_max_x > (GRID_MAX_POINTS_X) || grid_max_y > (GRID_MAX_POINTS_Y)) {
             eeprom_error = ERR_EEPROM_CORRUPT;

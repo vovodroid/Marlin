@@ -400,7 +400,7 @@ void menu_probe_level() {
     // Store to EEPROM
     //
     #if ENABLED(EEPROM_SETTINGS)
-      ACTION_ITEM(MSG_STORE_EEPROM, ui.store_settings);
+      ACTION_ITEM(MSG_STORE_EEPROM_MESH, []{ui.store_settings(true);});
     #endif
 
   }
