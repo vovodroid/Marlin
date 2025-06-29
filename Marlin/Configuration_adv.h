@@ -1904,6 +1904,8 @@
       //#define PLR_REBOOT_TIMEOUT       60 // (seconds) Restart after power loss if UPS never lost power
     #endif
 
+    //#define POWER_LOSS_TIMEOUT        10  // (ms) Power loss duration to raise event
+
     // Enable if Z homing is needed for proper recovery. 99.9% of the time this should be disabled!
     //#define POWER_LOSS_RECOVER_ZHOME
     #if ENABLED(POWER_LOSS_RECOVER_ZHOME)
