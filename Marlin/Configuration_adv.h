@@ -1902,6 +1902,8 @@
     #if ENABLED(BACKUP_POWER_SUPPLY)
       //#define POWER_LOSS_RETRACT_LEN   10 // (mm) Length of filament to retract on fail
       //#define PLR_REBOOT_TIMEOUT       60 // (seconds) Restart after power loss if UPS never lost power
+      //#define EVENT_GCODE_BEFORE_KILL "G27P4" // Executed as last thing befroe kill. E.g. "G27P4" to prevent leak on print
+      #endif
     #endif
 
     //#define POWER_LOSS_TIMEOUT        10  // (ms) Power loss duration to raise event
@@ -1911,6 +1913,8 @@
     #if ENABLED(POWER_LOSS_RECOVER_ZHOME)
       //#define POWER_LOSS_ZHOME_POS { 0, 0 } // Safe XY position to home Z while avoiding objects on the bed
     #endif
+
+    //#define EVENT_GCODE_ON_RESUME "M600"  //G-code run just before print resumed. E.g. "change filament" to ensure proper filament load.
   #endif
 
   /**
