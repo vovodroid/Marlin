@@ -1901,6 +1901,7 @@
     //#define BACKUP_POWER_SUPPLY           // Backup power / UPS to move the steppers on power-loss
     #if ENABLED(BACKUP_POWER_SUPPLY)
       //#define POWER_LOSS_RETRACT_LEN   10 // (mm) Length of filament to retract on fail
+      #define POWER_LOSS_UNRETRACT_LEN   POWER_LOSS_RETRACT_LEN // (mm) Length of filament to unretract on resume
       //#define PLR_REBOOT_TIMEOUT       60 // (seconds) Restart after power loss if UPS never lost power
       //#define EVENT_GCODE_BEFORE_KILL "G27P4" // Executed as last thing befroe kill. E.g. "G27P4" to prevent leak on print
       #endif
