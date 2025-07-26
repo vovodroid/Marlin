@@ -419,7 +419,7 @@ void MenuItem_static::draw(const uint8_t row, FSTR_P const ftpl, const uint8_t s
     if (isDir) tft.add_image(MENU_ITEM_ICON_X + line_shift, MENU_ITEM_ICON_Y, imgDirectory, COLOR_MENU_TEXT, lineColor);
     const char * const filename = ui.scrolled_filename(theCard, LCD_WIDTH - 1, sel);
     //SERIAL_ECHOLNPGM("Drawing filename: ", filename);
-    tft.add_text(MENU_ITEM_ICON_SPACE + line_shift, MENU_TEXT_Y, COLOR_MENU_TEXT, filename);
+    tft.add_text(isDir ? MENU_ITEM_ICON_SPACE + line_shift : 0, MENU_TEXT_Y, COLOR_MENU_TEXT, filename);
   }
 
 #endif
