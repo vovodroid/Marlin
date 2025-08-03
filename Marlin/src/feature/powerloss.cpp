@@ -442,16 +442,16 @@ void PrintJobRecovery::resume() {
     if (bt) PROCESS_SUBCOMMANDS_NOW(TS(F("M190S"), bt));
   #endif
 
-  // Heat hotend enough to soften material
-  #if HAS_HOTEND
-    HOTEND_LOOP() {
-      const celsius_t et = _MAX(info.target_temperature[e], 180);
-      if (et) {
-        TERN_(HAS_MULTI_HOTEND, PROCESS_SUBCOMMANDS_NOW(TS('T', e, 'S')));
-        PROCESS_SUBCOMMANDS_NOW(TS(F("M109S"), et));
-      }
-    }
-  #endif
+  // // Heat hotend enough to soften material
+  // #if HAS_HOTEND
+  //   HOTEND_LOOP() {
+  //     const celsius_t et = _MAX(info.target_temperature[e], 180);
+  //     if (et) {
+  //       TERN_(HAS_MULTI_HOTEND, PROCESS_SUBCOMMANDS_NOW(TS('T', e, 'S')));
+  //       PROCESS_SUBCOMMANDS_NOW(TS(F("M109S"), et));
+  //     }
+  //   }
+  // #endif
 
   // Interpret the saved Z according to flags
   const float z_print = resume_pos.z;
@@ -556,16 +556,16 @@ void PrintJobRecovery::resume() {
     #endif
   #endif
 
-  // Restore all hotend temperatures
-  #if HAS_HOTEND
-    HOTEND_LOOP() {
-      const celsius_t et = info.target_temperature[e];
-      if (et) {
-        TERN_(HAS_MULTI_HOTEND, PROCESS_SUBCOMMANDS_NOW(TS('T', e, 'S')));
-        PROCESS_SUBCOMMANDS_NOW(TS(F("M109S"), et));
-      }
-    }
-  #endif
+  // // Restore all hotend temperatures
+  // #if HAS_HOTEND
+  //   HOTEND_LOOP() {
+  //     const celsius_t et = info.target_temperature[e];
+  //     if (et) {
+  //       TERN_(HAS_MULTI_HOTEND, PROCESS_SUBCOMMANDS_NOW(TS('T', e, 'S')));
+  //       PROCESS_SUBCOMMANDS_NOW(TS(F("M109S"), et));
+  //     }
+  //   }
+  // #endif
 
   // Restore the previously active tool (with no_move)
   #if HAS_MULTI_EXTRUDER || HAS_MULTI_HOTEND
@@ -649,6 +649,17 @@ void PrintJobRecovery::resume() {
   #if ENABLED(SOVOL_SV06_RTS)
     if (rts.print_state) rts.refreshTime();
     rts.start_print_flag = false;
+  #endif
+
+  // Restore all hotend temperatures
+  #if HAS_HOTEND
+    HOTEND_LOOP() {
+      const celsius_t et = info.target_temperature[e];
+      if (et) {
+        TERN_(HAS_MULTI_HOTEND, PROCESS_SUBCOMMANDS_NOW(TS('T', e, 'S')));
+        PROCESS_SUBCOMMANDS_NOW(TS(F("M104S"), et));
+      }
+    }
   #endif
 
   #ifdef EVENT_GCODE_ON_RESUME
