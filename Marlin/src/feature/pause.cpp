@@ -680,15 +680,15 @@ void resume_print(
   // Load the new filament
   load_filament(slow_load_length, fast_load_length, purge_length, max_beep_count, show_lcd, nozzle_timed_out, PAUSE_MODE_SAME DXC_PASS);
 
-  if (targetTemp > 0) {
-    thermalManager.setTargetHotend(targetTemp, motion.extruder);
-    thermalManager.wait_for_hotend(motion.extruder, false);
-  }
+  // if (targetTemp > 0) {
+  //   thermalManager.setTargetHotend(targetTemp, motion.extruder);
+  //   thermalManager.wait_for_hotend(motion.extruder, false);
+  // }
 
   ui.pause_show_message(PAUSE_MESSAGE_RESUME);
 
   // Check Temperature before moving hotend
-  ensure_safe_temperature(DISABLED(BELTPRINTER));
+  // ensure_safe_temperature(DISABLED(BELTPRINTER));
 
   // Retract to prevent oozing
   motion.unscaled_e_move(-(PAUSE_PARK_RETRACT_LENGTH), feedRate_t(PAUSE_PARK_RETRACT_FEEDRATE));
