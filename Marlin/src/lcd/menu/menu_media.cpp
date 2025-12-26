@@ -110,6 +110,7 @@ void menu_file_selector_sd() {
     card.release();
     card.selectMediaSDCard();
   }
+  if (card.isSDCardMounted())  card.release();
   if (!card.isSDCardMounted()) card.mount();
   ui.goto_screen(menu_file_selector);
 }
