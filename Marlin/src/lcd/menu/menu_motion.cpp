@@ -482,7 +482,7 @@ void menu_move() {
       SUBMENU_N_S(axis, get_shaper_name(axis), MSG_FTM_CMPN_MODE, menu_ftm_shaper);
       if (IS_SHAPING(c.shaper[axis])) {
         editable.decimal = c.baseFreq[axis];
-        EDIT_ITEM_FAST_N(float42_52, axis, MSG_FTM_BASE_FREQ_N, &editable.decimal, FTM_MIN_SHAPE_FREQ, (FTM_FS) / 2, []{
+        EDIT_ITEM_FAST_N(float31,    axis, MSG_FTM_BASE_FREQ_N, &editable.decimal, FTM_MIN_SHAPE_FREQ, (FTM_FS) / 2, []{
           queue.inject(TS(F("M493"), IAXIS_CHAR(MenuItemBase::itemIndex), 'A', p_float_t(editable.decimal, 3)));
         });
         editable.decimal = c.zeta[axis];
