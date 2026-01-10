@@ -1416,7 +1416,7 @@ void Planner::check_axes_activity() {
    */
   void Planner::calculate_volumetric_extruder_limit(const uint8_t e) {
     const float &lim = volumetric_extruder_limit[e], &siz = filament_size[e];
-    volumetric_extruder_feedrate_limit[e] = (lim && siz) ? lim / CIRCLE_AREA(siz * 0.5f) : 0;
+    volumetric_extruder_feedrate_limit[e] = (lim > 0.1 && siz) ? lim / CIRCLE_AREA(siz * 0.5f) : 0;
   }
   void Planner::calculate_volumetric_extruder_limits() {
     EXTRUDER_LOOP() calculate_volumetric_extruder_limit(e);
