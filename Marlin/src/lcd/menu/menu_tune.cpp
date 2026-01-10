@@ -111,7 +111,15 @@ void menu_tune() {
   //
   // Speed:
   //
-  EDIT_ITEM(int3, MSG_SPEED, &motion.feedrate_percentage, SPEED_EDIT_MIN, SPEED_EDIT_MAX);
+  // EDIT_ITEM(int3, MSG_SPEED, &motion.feedrate_percentage, SPEED_EDIT_MIN, SPEED_EDIT_MAX);
+
+  #if ENABLED(VOLUMETRIC_EXTRUDER_LIMIT)
+    EDIT_ITEM_FAST(float31, MSG_VOLUMETRIC_LIMIT, &planner.volumetric_extruder_limit[motion.extruder], 0.0f, float(VOLUMETRIC_EXTRUDER_LIMIT_MAX), planner.calculate_volumetric_extruder_limits);
+    #if HAS_MULTI_EXTRUDER
+      EXTRUDER_LOOP()
+        EDIT_ITEM_FAST_N(float31, e, MSG_VOLUMETRIC_LIMIT_E, &planner.volumetric_extruder_limit[e], 0.0f, float(VOLUMETRIC_EXTRUDER_LIMIT_MAX), planner.calculate_volumetric_extruder_limits);
+    #endif
+  #endif
 
   //
   // Manual bed leveling, Bed Z:
@@ -120,6 +128,7 @@ void menu_tune() {
     EDIT_ITEM(float43, MSG_MESH_Z_OFFSET, &bedlevel.z_offset, -1, 1);
   #endif
 
+  /*
   //
   // Nozzle:
   // Nozzle [1-4]:
@@ -134,6 +143,7 @@ void menu_tune() {
     }
   #endif
 
+
   #if ENABLED(SINGLENOZZLE_STANDBY_TEMP)
     for (uint8_t e = 1; e < EXTRUDERS; ++e)
       EDIT_ITEM_FAST_N(int3, e, MSG_NOZZLE_STANDBY, &thermalManager.singlenozzle_temp[e], 0, thermalManager.hotend_max_target(0));
@@ -145,12 +155,14 @@ void menu_tune() {
   #if HAS_HEATED_BED
     EDIT_ITEM_FAST(int3, MSG_BED, &thermalManager.temp_bed.target, 0, BED_MAX_TARGET, thermalManager.start_watching_bed);
   #endif
+  */
 
   //
   // Fan Speed:
   //
   #if HAS_FAN
 
+    /*
     DEFINE_SINGLENOZZLE_ITEM();
 
     #if FAN_IS_M106ABLE(0)
@@ -191,6 +203,7 @@ void menu_tune() {
     #elif SNFAN(7)
       singlenozzle_item(7);
     #endif
+    */
 
   #endif // HAS_FAN
 
@@ -202,6 +215,7 @@ void menu_tune() {
     SUBMENU(MSG_FIXED_TIME_MOTION, menu_tune_ft_motion);
   #endif
 
+  /*
   //
   // Flow:
   //
@@ -213,6 +227,7 @@ void menu_tune() {
         EDIT_ITEM_N(int3, e, MSG_FLOW_N, &planner.flow_percentage[e], FLOW_EDIT_MIN, FLOW_EDIT_MAX, []{ planner.refresh_e_factor(MenuItemBase::itemIndex); });
     #endif
   #endif
+  */
 
   //
   // Advance K:
