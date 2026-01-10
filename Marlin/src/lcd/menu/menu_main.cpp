@@ -393,6 +393,8 @@ void menu_main() {
       });
     #endif
 
+    SUBMENU(MSG_MOTION, menu_motion);
+
     #if ENABLED(GCODE_REPEAT_MARKERS)
       if (repeat.is_active())
         ACTION_ITEM(MSG_END_LOOPS, repeat.cancel);
