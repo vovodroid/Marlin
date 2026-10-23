@@ -72,6 +72,8 @@
 //
 // Custom Thermistor 1000 parameters
 //
+#define THERMISTOR_RESISTANCE_NOMINAL_C 25.0f  // mmmmm comfortable
+
 #if TEMP_SENSOR_0 == 1000
   #define HOTEND0_PULLUP_RESISTOR_OHMS    4700 // Pullup resistor
   #define HOTEND0_RESISTANCE_25C_OHMS   100000 // Resistance at 25C
