@@ -553,7 +553,6 @@ typedef struct { raw_adc_t raw_min, raw_max; } temp_raw_range_t;
 typedef struct { raw_adc_t raw_min, raw_max; celsius_t mintemp, maxtemp; } temp_range_t;
 
 #define THERMISTOR_ABS_ZERO_C           -273.15f  // bbbbrrrrr cold !
-#define THERMISTOR_RESISTANCE_NOMINAL_C 25.0f     // mmmmm comfortable
 
 #if HAS_USER_THERMISTORS
 
