@@ -32,7 +32,7 @@
  *
  *   P[index]  Thermistor table index
  *   R[ohms]   Pullup resistor value
- *   T[ohms]   Resistance at 25C
+ *   T[ohms]   Resistance at reference temperature
  *   B[beta]   Thermistor "beta" value
  *   C[coeff]  Steinhart-Hart Coefficient 'C'
  *
@@ -56,7 +56,7 @@ void GcodeSuite::M305() {
       if (!thermalManager.set_pull_up_res(t_index, parser.value_float()))
         SERIAL_ECHO_MSG("!Invalid series resistance. (0 < R < 1000000)");
 
-    if (parser.seenval('T')) // Resistance at 25C
+    if (parser.seenval('T')) // Resistance at reference temperature
       if (!thermalManager.set_res25(t_index, parser.value_float()))
         SERIAL_ECHO_MSG("!Invalid 25C resistance. (0 < T < 10000000)");
 
