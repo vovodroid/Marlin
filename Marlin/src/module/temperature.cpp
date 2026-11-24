@@ -1102,7 +1102,7 @@ void Temperature::factory_reset() {
     sample_distance = 1;
     t1_time = 0;
 
-    hotend.target = 200.0f;   // So M105 looks nice
+    hotend.target = 250.0f;   // So M105 looks nice
     hotend.soft_pwm_amount = (MPC_MAX) >> 1;
 
     // Initialise rate of change to steady state at current time
@@ -1133,7 +1133,7 @@ void Temperature::factory_reset() {
 
           next_test_time_ms += test_interval_ms;
         }
-        else if (current_temp < 200.0f) {
+        else if (current_temp < 250.0f) {
           // Second regime (after 100deg) measure 3 points to determine asymptotic temperature
 
           // If there are too many samples, space them more widely
@@ -1150,7 +1150,7 @@ void Temperature::factory_reset() {
           next_test_time_ms += test_interval_ms * sample_distance;
         }
         else {
-          // Third regime (after 200deg) finished gathering data so finish
+          // Third regime (after 250deg) finished gathering data so finish
           break;
         }
       }
@@ -1303,7 +1303,7 @@ void Temperature::factory_reset() {
       Fan::sync_speeds();
     #endif
 
-    // Heat to 200 degrees
+    // Heat to 250 degrees
     SERIAL_ECHOLNPGM(STR_MPC_HEATING_PAST_200);
     LCD_ALERTMESSAGE(MSG_MPC_HEATING_PAST_200);
 
